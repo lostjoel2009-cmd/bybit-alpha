@@ -1,8 +1,8 @@
+export const dynamic = "force-dynamic";
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 import { TicketForm } from "./form";
 
-export const dynamic = "force-dynamic";
 
 export default async function SupportPage() {
   const user = await requireUser();

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/session";
 import { db } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
 
 export default async function AdminSupport() {
   await requireAdmin();

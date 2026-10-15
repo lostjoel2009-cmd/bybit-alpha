@@ -1,7 +1,7 @@
+export const dynamic = "force-dynamic";
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
 function fmt(v: string, d: number) { return parseFloat(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
 
 export default async function BillsPage() {

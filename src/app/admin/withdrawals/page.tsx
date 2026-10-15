@@ -3,7 +3,6 @@ import { requireAdmin } from "@/lib/session";
 import { db } from "@/lib/db";
 import { WithdrawalRow } from "./row";
 
-export const dynamic = "force-dynamic";
 
 export default async function AdminWithdrawals() {
   await requireAdmin();

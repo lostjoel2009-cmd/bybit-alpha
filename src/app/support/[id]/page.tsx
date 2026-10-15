@@ -1,9 +1,9 @@
+export const dynamic = "force-dynamic";
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { ReplyForm } from "./reply";
 
-export const dynamic = "force-dynamic";
 
 export default async function TicketDetail({ params }: { params: { id: string } }) {
   const user = await requireUser();

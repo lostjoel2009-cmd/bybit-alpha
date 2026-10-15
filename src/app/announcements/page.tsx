@@ -1,7 +1,7 @@
+export const dynamic = "force-dynamic";
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
 
 export default async function AnnouncementsPage() {
   const user = await requireUser();

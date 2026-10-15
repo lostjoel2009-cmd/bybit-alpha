@@ -2,7 +2,6 @@ export const dynamic = "force-dynamic";
 import { requireAdmin } from "@/lib/session";
 import { db } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
 
 export default async function AdminAudit() {
   await requireAdmin();

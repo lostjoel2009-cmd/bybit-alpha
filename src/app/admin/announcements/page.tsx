@@ -3,7 +3,6 @@ import { requireAdmin } from "@/lib/session";
 import { db } from "@/lib/db";
 import { AnnouncementForm } from "./form";
 
-export const dynamic = "force-dynamic";
 
 export default async function AdminAnnouncements() {
   await requireAdmin();

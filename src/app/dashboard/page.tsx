@@ -1,8 +1,8 @@
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
 
 function fmt(v: string | number, d = 2) {
   const n = typeof v === "string" ? parseFloat(v) : v;

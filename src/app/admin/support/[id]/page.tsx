@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { AdminTicket } from "./panel";
 
-export const dynamic = "force-dynamic";
 
 export default async function AdminTicketPage({ params }: { params: { id: string } }) {
   await requireAdmin();
