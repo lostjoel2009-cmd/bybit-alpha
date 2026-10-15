@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "BYBIT ALPHA", description: "Wallet application" };
+export const metadata: Metadata = { title: "ALPHA VAULT", description: "Wallet application" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="en"><body>{children}</body></html>;

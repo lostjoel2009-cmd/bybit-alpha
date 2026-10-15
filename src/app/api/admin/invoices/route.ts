@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const inv = await db.invoice.create({
     data: {
       invoiceNumber, userId, assetId, amount: amt.toString(), description,
-      paymentMethod: method || "Internal ledger transfer", payeeName: "BYBIT ALPHA",
+      paymentMethod: method || "Internal ledger transfer", payeeName: "ALPHA VAULT",
       status: "AWAITING_PAYMENT", dueDate: dueDate ? new Date(dueDate) : null, createdById: admin.id,
     },
   });
