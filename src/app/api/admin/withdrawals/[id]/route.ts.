@@ -1,0 +1,23 @@
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/session";
+import { db } from "@/lib/db";
+import { notify } from "@/lib/notify";
+
+export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const admin = await requireAdmin();
+  const { status, adminNote } = await req.json();
+  const w = await db.withdrawal.findUnique({ where: { id: params.id } });
+  if (!w) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  await db.withdrawal.update({
+    where: { id: w.id },
+    data: { status, adminNote: adminNote || null, reviewedById: admin.id, reviewedAt: new Date() },
+  });
+  await db.activityLog.create({
+    data: { userId: w.userId, event: "WITHDRAWAL_STATUS_CHANGED", description: `Withdrawal ${w.reference} is now ${status}`, reference: w.reference, status },
+  });
+  await db.auditLog.create({
+    data: { adminId: admin.id, targetUserId: w.userId, action: "UPDATE_WITHDRAWAL", resourceType: "Withdrawal", resourceId: w.id, details: { status, adminNote } },
+  });
+  await notify(w.userId, "WITHDRAWAL_STATUS_CHANGED", "Withdrawal update", `${w.reference} is now ${status.replace(/_/g, " ")}`, "/withdrawals");
+  return NextResponse.json({ ok: true });
+    }
