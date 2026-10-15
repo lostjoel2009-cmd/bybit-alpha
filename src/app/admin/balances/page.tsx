@@ -1,6 +1,9 @@
 export const dynamic = "force-dynamic";
 export const dynamic = "force-dynamic";
 export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 import { requireAdmin } from "@/lib/session";
 import { db } from "@/lib/db";
 import { BalanceForm } from "./form";
