@@ -1,0 +1,201 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model User {
+  id String @id @default(cuid())
+  accountId String @unique
+  email String @unique
+  name String
+  passwordHash String
+  role String @default("USER")
+  status String @default("ACTIVE")
+  lastLoginAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  wallets Wallet[]
+  invoices Invoice[]
+  withdrawals Withdrawal[]
+  tickets SupportTicket[]
+  notifications Notification[]
+  activities ActivityLog[]
+  adminAudits AuditLog[] @relation("AdminAudits")
+  targetAudits AuditLog[] @relation("TargetAudits")
+  cardOrders CardOrder[]
+  @@index([email])
+}
+
+model Asset {
+  id String @id @default(cuid())
+  symbol String @unique
+  name String
+  type String
+  decimals Int @default(8)
+  enabled Boolean @default(true)
+  createdAt DateTime @default(now())
+  wallets Wallet[]
+  invoices Invoice[]
+}
+
+model Wallet {
+  id String @id @default(cuid())
+  userId String
+  assetId String
+  balance Decimal @default(0) @db.Decimal(28, 8)
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id])
+  @@unique([userId, assetId])
+}
+
+model LedgerEntry {
+  id String @id @default(cuid())
+  walletId String
+  assetId String
+  type String
+  amount Decimal @db.Decimal(28, 8)
+  balanceAfter Decimal @db.Decimal(28, 8)
+  reason String
+  reference String? @unique
+  createdById String?
+  createdAt DateTime @default(now())
+  @@index([walletId, createdAt])
+}
+
+model Invoice {
+  id String @id @default(cuid())
+  invoiceNumber String @unique
+  userId String
+  assetId String
+  amount Decimal @db.Decimal(28, 8)
+  description String
+  paymentMethod String
+  payeeName String
+  status String @default("AWAITING_PAYMENT")
+  dueDate DateTime?
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id])
+  @@index([userId, status])
+}
+
+model Withdrawal {
+  id String @id @default(cuid())
+  reference String @unique
+  userId String
+  assetId String
+  amount Decimal @db.Decimal(28, 8)
+  destination String
+  status String @default("SUBMITTED")
+  adminNote String?
+  reviewedById String?
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, status])
+}
+
+model SupportTicket {
+  id String @id @default(cuid())
+  ticketNumber String @unique
+  userId String
+  subject String
+  category String
+  status String @default("OPEN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+  @@index([userId, status])
+}
+
+model SupportMessage {
+  id String @id @default(cuid())
+  ticketId String
+  senderId String
+  senderRole String
+  body String
+  createdAt DateTime @default(now())
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model Announcement {
+  id String @id @default(cuid())
+  title String
+  body String
+  audience String @default("ALL")
+  archived Boolean @default(false)
+  createdById String
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id String @id @default(cuid())
+  userId String
+  type String
+  title String
+  body String
+  link String?
+  readAt DateTime?
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, readAt])
+}
+
+model CardOrder {
+  id String @id @default(cuid())
+  reference String @unique
+  userId String
+  cardType String
+  status String @default("ORDER_RECEIVED")
+  shippingName String?
+  shippingAddress String?
+  carrier String?
+  trackingNumber String?
+  estimatedDelivery DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events ShipmentEvent[]
+  @@index([userId, status])
+}
+
+model ShipmentEvent {
+  id String @id @default(cuid())
+  cardOrderId String
+  status String
+  description String
+  location String?
+  occurredAt DateTime @default(now())
+  cardOrder CardOrder @relation(fields: [cardOrderId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id String @id @default(cuid())
+  userId String
+  event String
+  description String
+  reference String?
+  amount Decimal? @db.Decimal(28, 8)
+  status String?
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, createdAt])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  adminId String
+  targetUserId String?
+  action String
+  resourceType String
+  resourceId String?
+  details Json?
+  createdAt DateTime @default(now())
+  admin User @relation("AdminAudits", fields: [adminId], references: [id])
+  targetUser User? @relation("TargetAudits", fields: [targetUserId], references: [id])
+  @@index([adminId, createdAt])
+}
